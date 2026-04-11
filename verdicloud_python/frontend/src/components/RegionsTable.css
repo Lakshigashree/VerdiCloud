@@ -1,0 +1,237 @@
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.table-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.table-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.table-sub {
+  font-size: 0.75rem;
+  color: var(--text3);
+  margin-top: 0.25rem;
+}
+
+.region-count {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text3);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table thead tr {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.sortable:hover { color: var(--text2); }
+
+.th-unit {
+  opacity: 0.6;
+  font-size: 0.55rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.sort-icon {
+  margin-left: 0.3rem;
+  opacity: 0.4;
+  font-size: 0.7rem;
+}
+
+.sort-icon.active { opacity: 1; color: var(--green); }
+
+.data-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+  animation: fadeUp 0.35s ease both;
+}
+
+.data-table tbody tr:last-child { border-bottom: none; }
+.data-table tbody tr:hover { background: var(--surface2); }
+
+.highlighted-row {
+  background: rgba(74, 222, 128, 0.05) !important;
+  border-left: 3px solid var(--green-dim) !important;
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+/* Region cell */
+.region-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.star {
+  color: var(--green);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.region-name {
+  font-weight: 400;
+  color: var(--text);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.region-id {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text3);
+}
+
+/* Provider tag */
+.provider-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text3);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+}
+
+/* Color pills */
+.pill {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+.pill-green { color: var(--green);  background: rgba(74, 222, 128, 0.1);  }
+.pill-amber { color: var(--amber);  background: rgba(251, 191, 36, 0.1);  }
+.pill-red   { color: var(--red);    background: rgba(248, 113, 113, 0.1); }
+
+/* Renewable bar */
+.renewable-val {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text2);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.renewable-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 999px;
+  width: 80px;
+  overflow: hidden;
+}
+
+.renewable-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-muted), var(--green-dim));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* Score bar */
+.score-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.score-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-dim), var(--amber));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.score-num {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text2);
+  min-width: 34px;
+}
+
+.no-score {
+  font-family: var(--mono);
+  color: var(--text3);
+  font-size: 0.8rem;
+}
+
+/* Skeleton */
+.skeleton-row td { padding: 0.875rem 1rem; }
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.6; }
+}
+
+.skeleton-cell {
+  height: 14px;
+  background: var(--surface2);
+  border-radius: 4px;
+  animation: shimmer 1.4s ease infinite;
+}
