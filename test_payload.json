@@ -1,0 +1,5 @@
+{
+  "task": "API_Ping",
+  "metadata": "json_request",
+  "content": "Hello World from GCP"
+}

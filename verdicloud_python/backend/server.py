@@ -1,40 +1,39 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from optimizer import score_regions, find_best_region
+from optimizer import score_regions, find_best_region, detect_workload_automatically
 from regions import REGIONS
 
 app = Flask(__name__)
-CORS(app)
-
+# Crucial: This allows your React app on port 3000 to talk to Flask on port 4000
+CORS(app) 
 
 @app.route("/", methods=["GET"])
 def health():
-    return jsonify({"status": "VerdiCloud API is running", "version": "1.0.0"})
-
+    return jsonify({"status": "VerdiCloud AI Agent Active", "mode": "Inference"})
 
 @app.route("/api/regions", methods=["GET"])
 def get_regions():
-    scored = score_regions(REGIONS)
+    # Default autonomous scoring for initial load
+    detected = detect_workload_automatically()
+    scored = score_regions(REGIONS, detected)
     return jsonify({"success": True, "data": scored})
-
 
 @app.route("/api/optimize", methods=["POST"])
 def optimize():
     body = request.get_json(silent=True) or {}
-    workload_type = body.get("workloadType", "").strip()
+    
+    # 1. Matches App.js: body.JSON.stringify({ input_payload: ... })
+    # We check for 'input_payload' first, then 'payload' as a backup
+    workload_data = body.get("input_payload") or body.get("payload", "")
 
-    if not workload_type:
-        return jsonify({"success": False, "error": "workloadType is required"}), 400
-
-    result = find_best_region(workload_type)
-    return jsonify({
-        "success": True,
-        "recommendation": result["best"],
-        "reason": result["reason"],
-        "allScored": result["allScored"],
-    })
-
+    # 2. Call the optimizer (this returns the dict with 'success', 'best', 'reason', etc.)
+    result = find_best_region(workload_data)
+    
+    # 3. Return the result directly. 
+    # This ensures App.js sees: data.success, data.best, data.allScored, data.deploymentUrl
+    return jsonify(result)
 
 if __name__ == "__main__":
-    print("✅ VerdiCloud Python backend running at http://localhost:4000")
+    print("✅ [PORT 4000]: VerdiCloud Backend is LIVE.")
+    # Debug=True is great for development so it restarts when you save
     app.run(host="0.0.0.0", port=4000, debug=True)

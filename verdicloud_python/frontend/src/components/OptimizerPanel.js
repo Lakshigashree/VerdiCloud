@@ -1,15 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import "./OptimizerPanel.css";
-
-const WORKLOADS = [
-  { value: "batch-data-processing", label: "Batch Data Processing" },
-  { value: "ml-training", label: "ML Model Training" },
-  { value: "web-serving", label: "Web Application Serving" },
-  { value: "video-transcoding", label: "Video Transcoding" },
-  { value: "database-backup", label: "Database Backup" },
-  { value: "cdn-edge-caching", label: "CDN / Edge Caching" },
-  { value: "scientific-compute", label: "Scientific Computing" },
-];
 
 function CarbonBadge({ value }) {
   if (value < 100) return <span className="badge badge-green">Low Carbon</span>;
@@ -18,75 +8,83 @@ function CarbonBadge({ value }) {
 }
 
 export default function OptimizerPanel({ onOptimize, optimizing, recommendation }) {
-  const [workload, setWorkload] = useState("batch-data-processing");
+  
+  // This triggers the autonomous detection by sending a specific payload
+  const handleAutonomousDeploy = () => {
+    // String containing "NEXUS" and "SLA" to trigger the specific detection logic in Python
+    onOptimize("NEXUS_SLA_SWARM_REMEDIATION_TASK");
+  };
 
-  const handleSubmit = () => onOptimize(workload);
-  const rec = recommendation?.recommendation;
+  // The backend returns the winning region in the 'best' key
+  const best = recommendation?.best;
+  
+  // Fallback link in case the backend variable is ever empty
+  const liveLink = recommendation?.deploymentUrl || "https://nexus-system-r06t.onrender.com/";
 
   return (
-    <div className="optimizer-panel fade-up">
+    <div className={`optimizer-panel fade-up ${optimizing ? "is-scanning" : ""}`}>
       <div className="panel-header">
         <h2 className="panel-title">Workload Optimizer</h2>
-        <p className="panel-subtitle">Select a workload to find the greenest region</p>
+        <p className="panel-subtitle">
+          {optimizing ? "AI Agent scanning metadata..." : "Autonomous Discovery Layer Active"}
+        </p>
       </div>
 
       <div className="input-block">
-        <label className="input-label">Workload Type</label>
-        <select
-          className="select"
-          value={workload}
-          onChange={(e) => setWorkload(e.target.value)}
-        >
-          {WORKLOADS.map((w) => (
-            <option key={w.value} value={w.value}>{w.label}</option>
-          ))}
-        </select>
+        <label className="input-label">Detected Signature</label>
+        <div className="workload-badge">
+          <span className="dot"></span>
+          <span>
+            {optimizing ? "Scanning..." : 
+             recommendation ? recommendation.detectedWorkload : "Awaiting Payload"}
+          </span>
+        </div>
       </div>
 
       <button
         className={`optimize-btn ${optimizing ? "loading" : ""}`}
-        onClick={handleSubmit}
+        onClick={handleAutonomousDeploy}
         disabled={optimizing}
       >
         {optimizing ? (
           <>
             <span className="spinner" />
-            Analyzing Regions…
+            Parsing Metadata...
           </>
         ) : (
           <>
             <span className="btn-icon">⚡</span>
-            Optimize Workload
+            Deploy Autonomous Workload
           </>
         )}
       </button>
 
-      {rec && (
+      {best && (
         <div className="result-card fade-up">
           <div className="result-header">
-            <span className="result-label">Recommended Region</span>
-            <CarbonBadge value={rec.carbonIntensity} />
+            <span className="result-label">Optimized Destination</span>
+            <CarbonBadge value={best.carbonIntensity} />
           </div>
 
-          <div className="result-name">{rec.name}</div>
-          <div className="result-provider">{rec.provider} · {rec.id}</div>
+          <div className="result-name">{best.name}</div>
+          <div className="result-provider">{best.provider} · {best.id}</div>
 
           <div className="result-metrics">
             <div className="metric">
               <span className="metric-value" style={{ color: "var(--green)" }}>
-                {rec.carbonIntensity}
+                {best.carbonIntensity}
               </span>
               <span className="metric-label">gCO₂/kWh</span>
             </div>
             <div className="metric-divider" />
             <div className="metric">
-              <span className="metric-value">{rec.latency}ms</span>
+              <span className="metric-value">{best.latency}ms</span>
               <span className="metric-label">Latency</span>
             </div>
             <div className="metric-divider" />
             <div className="metric">
               <span className="metric-value" style={{ color: "var(--green)" }}>
-                {rec.renewable}%
+                {best.renewable}%
               </span>
               <span className="metric-label">Renewable</span>
             </div>
@@ -96,13 +94,23 @@ export default function OptimizerPanel({ onOptimize, optimizing, recommendation 
             <span className="reason-icon">💡</span>
             <p>{recommendation.reason}</p>
           </div>
+
+          {/* --- FIXED: LINK TO YOUR LIVE NEXUS SYSTEM --- */}
+          <a 
+            href={liveLink} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="nexus-link-btn"
+          >
+            🚀 Open Live Nexus Dashboard
+          </a>
         </div>
       )}
 
-      {!rec && !optimizing && (
+      {!best && !optimizing && (
         <div className="empty-state">
           <div className="empty-icon">🌿</div>
-          <p>Run the optimizer to get your carbon-aware recommendation</p>
+          <p>Click deploy to trigger autonomous workload shifting</p>
         </div>
       )}
     </div>

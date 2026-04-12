@@ -1,10 +1,18 @@
 import React from "react";
 import "./CarbonChart.css";
 
-function carbonColor(value) {
-  if (value < 100) return "var(--green-dim)";
-  if (value < 300) return "var(--amber)";
-  return "var(--red-dim)";
+// Updated helper to return CSS classes instead of raw color values
+function getCarbonClass(value) {
+  if (value < 100) return "fill-green";
+  if (value < 300) return "fill-amber";
+  return "fill-red";
+}
+
+// Helper for text color classes to match the legend
+function getTextColorClass(value) {
+  if (value < 100) return "legend-green";
+  if (value < 300) return "legend-amber";
+  return "legend-red";
 }
 
 export default function CarbonChart({ regions, loading, highlighted }) {
@@ -24,7 +32,8 @@ export default function CarbonChart({ regions, loading, highlighted }) {
     );
   }
 
-  const maxCarbon = Math.max(...regions.map((r) => r.carbonIntensity));
+  // Calculate max for percentage scaling
+  const maxCarbon = Math.max(...regions.map((r) => r.carbonIntensity), 1);
 
   return (
     <div className="chart-card fade-up">
@@ -34,9 +43,15 @@ export default function CarbonChart({ regions, loading, highlighted }) {
       </div>
 
       <div className="chart-legend">
-        <span className="legend-item legend-green">● Low (&lt;100)</span>
-        <span className="legend-item legend-amber">● Moderate (100–300)</span>
-        <span className="legend-item legend-red">● High (&gt;300)</span>
+        <span className="legend-item legend-green">
+          <span className="legend-dot fill-green"></span> Low (&lt;100)
+        </span>
+        <span className="legend-item legend-amber">
+          <span className="legend-dot fill-amber"></span> Moderate (100–300)
+        </span>
+        <span className="legend-item legend-red">
+          <span className="legend-dot fill-red"></span> High (&gt;300)
+        </span>
       </div>
 
       <div className="chart-bars">
@@ -46,6 +61,9 @@ export default function CarbonChart({ regions, loading, highlighted }) {
           .map((r, i) => {
             const pct = (r.carbonIntensity / maxCarbon) * 100;
             const isHighlighted = r.id === highlighted;
+            const carbonClass = getCarbonClass(r.carbonIntensity);
+            const textClass = getTextColorClass(r.carbonIntensity);
+
             return (
               <div
                 key={r.id}
@@ -55,26 +73,19 @@ export default function CarbonChart({ regions, loading, highlighted }) {
                 <div className="bar-label" title={r.name}>
                   <span className="bar-region">{r.name}</span>
                   <span className="bar-provider">{r.provider}</span>
+                  {isHighlighted && <span className="best-tag">OPTIMIZED</span>}
                 </div>
+
                 <div className="bar-track">
                   <div
-                    className="bar-fill"
-                    style={{
-                      width: `${pct}%`,
-                      background: carbonColor(r.carbonIntensity),
-                      boxShadow: isHighlighted
-                        ? `0 0 12px ${carbonColor(r.carbonIntensity)}60`
-                        : "none",
-                    }}
+                    className={`bar-fill ${carbonClass}`}
+                    style={{ width: `${pct}%` }}
                   />
-                  <span
-                    className="bar-value"
-                    style={{ color: carbonColor(r.carbonIntensity) }}
-                  >
-                    {r.carbonIntensity}
-                  </span>
                 </div>
-                {isHighlighted && <span className="best-tag">BEST</span>}
+
+                <span className={`bar-value ${textClass}`}>
+                  {r.carbonIntensity}
+                </span>
               </div>
             );
           })}

@@ -1,8 +1,30 @@
+/* --- VARIABLES --- */
+:root {
+  --bg: #0b0f1a;
+  --surface: #151b2d;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #4ade80; /* Green for Sustainability */
+  --accent-blue: #38bdf8; /* Blue for Latency/API */
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+/* --- BASE STYLES --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+}
+
 .app {
   min-height: 100vh;
   background: 
-    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(74, 222, 128, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(34, 197, 94, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(74, 222, 128, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 60%),
     var(--bg);
 }
 
@@ -22,17 +44,72 @@
   align-items: start;
 }
 
+/* --- AUTONOMOUS STATUS BADGE --- */
+.workload-status-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.workload-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: var(--accent-blue);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  width: fit-content;
+}
+
+/* --- ANIMATED SCANNER (The "Thinking" Look) --- */
+.scanning {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanning::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to bottom, transparent, rgba(74, 222, 128, 0.1), transparent);
+  animation: scan 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+/* --- ERROR BANNER --- */
 .error-banner {
   background: rgba(248, 113, 113, 0.1);
   border: 1px solid rgba(248, 113, 113, 0.3);
-  color: var(--red);
+  color: #f87171;
   padding: 0.875rem 1.25rem;
   border-radius: 10px;
-  /* Modified: Changed from var(--mono) to var(--font-main) for a professional look */
   font-family: var(--font-main);
   font-weight: 500;
   font-size: 0.85rem;
-  letter-spacing: -0.01em;
 }
 
 @media (max-width: 900px) {

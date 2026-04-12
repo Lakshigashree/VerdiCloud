@@ -3,6 +3,7 @@
 # latency: ms (lower is better)
 
 REGIONS = [
+    {"id": "render-node-01", "name": "Render US-East (Primary)","provider": "Render","latency": 45,"renewable": 95, "carbonIntensity": 80},
     {"id": "us-west-2",       "name": "US West (Oregon)",           "provider": "AWS",   "carbonIntensity": 120, "latency": 45,  "renewable": 92},
     {"id": "eu-north-1",      "name": "EU North (Stockholm)",       "provider": "AWS",   "carbonIntensity": 18,  "latency": 110, "renewable": 98},
     {"id": "eu-west-1",       "name": "EU West (Ireland)",          "provider": "AWS",   "carbonIntensity": 220, "latency": 95,  "renewable": 58},

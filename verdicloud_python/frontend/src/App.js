@@ -12,6 +12,7 @@ export default function App() {
   const [recommendation, setRecommendation] = useState(null);
   const [optimizing, setOptimizing] = useState(false);
 
+  // Initial load of regions
   useEffect(() => {
     fetch("/api/regions")
       .then((r) => r.json())
@@ -20,50 +21,73 @@ export default function App() {
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to connect to backend. Make sure the server is running on port 4000.");
+        setError("Backend Connection Error: Ensure server.py is running on port 4000.");
         setLoading(false);
       });
   }, []);
 
-  const handleOptimize = async (workloadType) => {
+  /**
+   * handleOptimize:
+   * Fixed the JSON body key to 'input_payload' to match your Python find_best_region(input_payload)
+   */
+  const handleOptimize = async (payloadMetadata = "") => {
     setOptimizing(true);
     setRecommendation(null);
+    setError(null);
+
     try {
       const res = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workloadType }),
+        // IMPORTANT: Backend expects 'input_payload' 
+        body: JSON.stringify({ input_payload: payloadMetadata }),
       });
+      
       const data = await res.json();
-      if (data.success) {
+      
+      // Checking for 'best' key which comes from your Python dictionary return
+      if (data.best) {
         setRecommendation(data);
         setRegions(data.allScored);
+      } else {
+        setError("Optimization failed: Backend did not return a valid recommendation.");
       }
-    } catch {
-      setError("Optimization request failed.");
+    } catch (err) {
+      setError("Network error: Could not connect to optimization engine.");
+    } finally {
+      setOptimizing(false);
     }
-    setOptimizing(false);
   };
 
   return (
-    <div className="app">
+    /* The 'scanning' class is added dynamically when optimizing to trigger the CSS animation */
+    <div className={`app ${optimizing ? "is-optimizing scanning-overlay" : ""}`}>
       <Header />
       <main className="main">
-        {error && <div className="error-banner">{error}</div>}
+        {error && <div className="error-banner">⚠️ {error}</div>}
 
         <div className="top-grid">
           <OptimizerPanel
             onOptimize={handleOptimize}
             optimizing={optimizing}
+            /* recommendation object now contains:
+               .best (The winning region)
+               .detectedWorkload (The AI discovery result)
+               .deploymentUrl (The Live NEXUS Link)
+            */
             recommendation={recommendation}
           />
-          <CarbonChart regions={regions} loading={loading} highlighted={recommendation?.recommendation?.id} />
+          <CarbonChart 
+            regions={regions} 
+            loading={loading} 
+            highlighted={recommendation?.best?.id} 
+          />
         </div>
 
         <RegionsTable
           regions={regions}
           loading={loading}
-          highlightedId={recommendation?.recommendation?.id}
+          highlightedId={recommendation?.best?.id}
         />
       </main>
     </div>
